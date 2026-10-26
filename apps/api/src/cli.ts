@@ -26,14 +26,18 @@ async function main(): Promise<void> {
   }
 
   console.log(`\n${result.commitCount} commits, ${result.fileCount} files analyzed\n`);
-   console.log("Top 10 hotspots (scores are relative to the hottest file, which is 1.00):\n");
+  console.log("Top 10 hotspots (scores are relative to the hottest file, which is 1.00):\n");
 
   result.hotspots.slice(0, 10).forEach((h, i) => {
     const rank = String(i + 1).padStart(2);
     const score = h.score.toFixed(2);
     const changes = String(h.changes).padStart(4);
     const lines = String(h.lines).padStart(6);
-    console.log(`${rank}. score ${score} | ${changes} changes | ${lines} lines | ${h.path}`);
+    const owner = `${h.topAuthor} ${Math.round(h.topShare * 100)}%`;
+    const flag = h.atRisk ? "  <- BUS FACTOR RISK" : "";
+    console.log(
+      `${rank}. score ${score} | ${changes} changes | ${lines} lines | ${h.path} | ${owner}${flag}`,
+    );
   });
 }
 

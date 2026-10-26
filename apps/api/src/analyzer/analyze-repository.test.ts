@@ -21,6 +21,13 @@ describe("analyzeDirectory on a fixture repo", () => {
     expect(result.fileCount).toBe(2);
   });
 
+    test("flags files owned mostly by one author", () => {
+    const [login, db] = result.hotspots;
+    expect(login).toMatchObject({ busFactor: 1, topAuthor: "Asha", atRisk: true });
+    expect(login?.topShare).toBeCloseTo(0.667, 2);
+    expect(db).toMatchObject({ busFactor: 1, topAuthor: "Asha", atRisk: false });
+  });
+
   test("ranks files by hotspot score", () => {
     expect(result.hotspots.map((h) => h.path)).toEqual(["src/login.ts", "src/db.ts"]);
 
