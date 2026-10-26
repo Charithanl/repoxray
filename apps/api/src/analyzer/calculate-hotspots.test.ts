@@ -29,6 +29,20 @@ describe("calculateHotspots", () => {
     expect(result[2]?.score).toBeCloseTo(0.5);
   });
 
+    test("scales scores so the hottest file is always 1", () => {
+    const result = calculateHotspots(
+      [stat("x.ts", 10), stat("y.ts", 2)],
+      new Map([
+        ["x.ts", 100],
+        ["y.ts", 1000],
+      ]),
+    );
+
+    expect(result.map((h) => h.path)).toEqual(["y.ts", "x.ts"]);
+    expect(result[0]?.score).toBeCloseTo(1);
+    expect(result[1]?.score).toBeCloseTo(0.5);
+  });
+
   test("skips files that no longer exist", () => {
     const result = calculateHotspots(stats, lines);
     expect(result.find((h) => h.path === "deleted.ts")).toBeUndefined();

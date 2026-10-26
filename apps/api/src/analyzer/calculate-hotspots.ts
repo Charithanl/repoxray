@@ -20,11 +20,20 @@ export function calculateHotspots(
   const maxLines =
     existing.reduce((max, s) => Math.max(max, lineCounts.get(s.path) ?? 0), 0) || 1;
 
-  return existing
-    .map((s) => {
-      const lines = lineCounts.get(s.path) ?? 0;
-      const score = (s.changes / maxChanges) * (lines / maxLines);
-      return { path: s.path, changes: s.changes, lines, score };
-    })
+    const raw = existing.map((s) => {
+    const lines = lineCounts.get(s.path) ?? 0;
+    return {
+      path: s.path,
+      changes: s.changes,
+      lines,
+      score: (s.changes / maxChanges) * (lines / maxLines),
+    };
+  });
+
+  // Rescale so the hottest file in this repo is exactly 1
+  const topScore = raw.reduce((max, h) => Math.max(max, h.score), 0) || 1;
+
+  return raw
+    .map((h) => ({ ...h, score: h.score / topScore }))
     .sort((a, b) => b.score - a.score || a.path.localeCompare(b.path));
 }

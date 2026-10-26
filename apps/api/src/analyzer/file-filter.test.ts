@@ -2,10 +2,10 @@ import { describe, expect, test } from "vitest";
 import { shouldAnalyzeFile } from "./file-filter";
 
 describe("shouldAnalyzeFile", () => {
-  test("keeps normal source and docs files", () => {
+  test("keeps normal source files", () => {
     expect(shouldAnalyzeFile("src/login.ts")).toBe(true);
-    expect(shouldAnalyzeFile("README.md")).toBe(true);
     expect(shouldAnalyzeFile("src/distance.ts")).toBe(true);
+    expect(shouldAnalyzeFile("lib/response.js")).toBe(true);
   });
 
   test("skips lockfiles, images, build output and dependencies", () => {
@@ -17,5 +17,15 @@ describe("shouldAnalyzeFile", () => {
     expect(shouldAnalyzeFile("public/logo.png")).toBe(false);
     expect(shouldAnalyzeFile("static/app.min.js")).toBe(false);
     expect(shouldAnalyzeFile("static/app.js.map")).toBe(false);
+  });
+
+  test("skips docs, changelogs, licenses and CI config", () => {
+    expect(shouldAnalyzeFile("README.md")).toBe(false);
+    expect(shouldAnalyzeFile("History.md")).toBe(false);
+    expect(shouldAnalyzeFile("CHANGELOG.md")).toBe(false);
+    expect(shouldAnalyzeFile("LICENSE")).toBe(false);
+    expect(shouldAnalyzeFile("docs/guide.html")).toBe(false);
+    expect(shouldAnalyzeFile(".github/workflows/ci.yml")).toBe(false);
+    expect(shouldAnalyzeFile("apps/api/package.json")).toBe(false);
   });
 });
