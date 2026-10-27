@@ -25,7 +25,11 @@ async function main(): Promise<void> {
     result = await analyzeDirectory(dir);
   }
 
-  console.log(`\n${result.commitCount} commits, ${result.fileCount} files analyzed\n`);
+  const months = [...new Set(result.monthly.map((m) => m.month))].sort();
+
+  console.log(
+    `\n${result.commitCount} commits, ${result.fileCount} files, ${months.length} months of history (${months[0] ?? "-"} to ${months[months.length - 1] ?? "-"})\n`,
+  );
   console.log("Top 10 hotspots (scores are relative to the hottest file, which is 1.00):\n");
 
   result.hotspots.slice(0, 10).forEach((h, i) => {

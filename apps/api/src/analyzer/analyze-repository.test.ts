@@ -20,6 +20,34 @@ describe("analyzeDirectory on a fixture repo", () => {
     expect(result.commitCount).toBe(4);
     expect(result.fileCount).toBe(2);
   });
+  test("groups changes by month for files that still exist", () => {
+    expect(result.monthly).toEqual([
+      {
+        path: "src/db.ts",
+        month: "2026-01",
+        changes: 1,
+        added: 20,
+        deleted: 0,
+        authors: { Asha: 1 },
+      },
+      {
+        path: "src/login.ts",
+        month: "2026-01",
+        changes: 2,
+        added: 12,
+        deleted: 0,
+        authors: { Asha: 1, Ravi: 1 },
+      },
+      {
+        path: "src/login.ts",
+        month: "2026-02",
+        changes: 1,
+        added: 2,
+        deleted: 0,
+        authors: { Asha: 1 },
+      },
+    ]);
+  });
 
     test("flags files owned mostly by one author", () => {
     const [login, db] = result.hotspots;

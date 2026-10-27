@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { calculateHotspots, type Hotspot } from "./calculate-hotspots";
 import { cleanupRepository, cloneRepository } from "./clone-repository";
 import { collectFileStats } from "./collect-file-stats";
+import { collectMonthlyStats, type MonthlyFileStat } from "./collect-monthly-stats";
 import { collectLineCounts } from "./count-lines";
 import { shouldAnalyzeFile } from "./file-filter";
 import { parseGitHistory } from "./parse-git-history";
@@ -10,6 +11,7 @@ import { runGit } from "./run-git";
 
 export interface AnalysisResult {
   hotspots: Hotspot[];
+  monthly: MonthlyFileStat[];
   commitCount: number;
   fileCount: number;
 }
@@ -51,8 +53,12 @@ export async function analyzeDirectory(dir: string): Promise<AnalysisResult> {
   const stats = collectFileStats(commits);
   const lineCounts = await collectLineCounts(dir);
 
+  // Only keep monthly numbers for files that still exist, since the treemap only draws those
+  const monthly = collectMonthlyStats(commits).filter((m) => lineCounts.has(m.path));
+
   return {
     hotspots: calculateHotspots(stats, lineCounts),
+    monthly,
     commitCount: commits.length,
     fileCount: lineCounts.size,
   };
