@@ -26,7 +26,7 @@ async function main(): Promise<void> {
   }
 
   const months = [...new Set(result.monthly.map((m) => m.month))].sort();
-
+   // done with analysis 
   console.log(
     `\n${result.commitCount} commits, ${result.fileCount} files, ${months.length} months of history (${months[0] ?? "-"} to ${months[months.length - 1] ?? "-"})\n`,
   );
